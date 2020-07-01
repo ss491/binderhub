@@ -1,0 +1,46 @@
+{{- if .Values.ingress.enabled -}}
+# FIXME: Update before k8s 1.20 but after we no longer require support for k8s
+# 1.14. networking.k8s.io/v1beta1 was introduced in k8s 1.14 to replace
+# extensions/v1beta1 that goes away in k8s 1.20.
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: binderhub
+  {{- if or (and .Values.ingress.https.enabled (eq .Values.ingress.https.type "kube-lego")) .Values.ingress.annotations }}
+  annotations:
+    {{- if and .Values.ingress.https.enabled (eq .Values.ingress.https.type "kube-lego") }}
+    kubernetes.io/tls-acme: "true"
+    {{- end }}
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  rules:
+    {{- range .Values.ingress.hosts }}
+    - host: {{ . }}
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: binder
+              servicePort: 80
+    {{- end }}
+  {{- if and .Values.ingress.https.enabled (eq .Values.ingress.https.type "kube-lego") }}
+  tls:
+    - secretName: kubelego-tls-binder-{{ .Release.Name }}
+      hosts:
+        {{- range .Values.ingress.hosts }}
+        - {{ . | quote }}
+        {{- end }}
+  {{- else if .Values.ingress.tls }}
+  tls:
+    {{- range .Values.ingress.tls }}
+    - hosts:
+        {{- range .hosts }}
+        - {{ . | quote }}
+        {{- end }}
+      secretName: {{ .secretName }}
+    {{- end }}
+  {{- end }}
+{{- end -}}

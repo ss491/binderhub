@@ -1,0 +1,10 @@
+beautifulsoup4
+codecov
+html5lib
+pytest
+pytest-asyncio
+pytest-cov
+requests
+ruamel.yaml>=0.15
+chartpress==0.6.*
+jupyterhub

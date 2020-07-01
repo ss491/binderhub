@@ -1,0 +1,22 @@
+# documentation specific extra packages
+sphinx>=1.7
+recommonmark==0.4.0
+sphinx-copybutton
+traitlets
+pandas
+ruamel.yaml
+pydata_sphinx_theme
+# install BinderHub dependencies. We manually list them here because some
+# dependencies (like pycurl) can't be installed on ReadTheDocs and aren't
+# needed to build the docs.
+kubernetes==9.0.*
+escapism
+tornado
+traitlets
+docker
+jinja2
+prometheus_client
+python-json-logger
+jupyterhub
+jsonschema
+#pycurl Do not install for docs as it breaks the RTD build. Its primary use is for mocks in testing .
